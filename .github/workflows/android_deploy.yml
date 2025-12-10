@@ -1,0 +1,49 @@
+name: Flutter Android CI/CD
+
+on:
+  push:
+    branches:
+      - master # O la rama que uses como principal (ej: master)
+  workflow_dispatch: # Permite iniciar el flujo manualmente desde GitHub
+
+jobs:
+  build_android:
+    runs-on: ubuntu-latest # Máquina virtual para la compilación
+
+    steps:
+      - name: ⬇️ Checkout Code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.x' # Usa la versión de Flutter que estés usando (o la última estable)
+          channel: 'stable'
+          
+      - name: 📦 Get Dependencies
+        run: flutter pub get
+
+      - name: 🔑 Set up Key Properties (Opcional, si usas signing)
+        # Aquí iría el código para descomprimir tu archivo 'key.jks' si ya lo tienes para firmar
+        run: |
+          echo "key.store=/home/runner/work/keyah-flutter/keyah-flutter/android/app/key.jks" >> android/key.properties
+          echo "key.alias=upload" >> android/key.properties
+          # ... más variables de clave si las tienes
+
+      - name: 🏗️ Build App Bundle (AAB)
+        run: flutter build appbundle
+
+      - name: 📤 Upload Artifact (AAB)
+        uses: actions/upload-artifact@v4
+        with:
+          name: keyah-release-android
+          path: build/app/outputs/bundle/release/app-release.aab
+          
+      - name: 🚀 Deploy to Google Play Store (PASO FUTURO)
+        # Para esto necesitarás un archivo de credenciales de Google Play (JSON)
+        # uses: r0adkll/upload-google-play@v1
+        # with:
+        #   serviceAccountJson: ${{ secrets.PLAY_STORE_SA_KEY }}
+        #   packageName: com.arewalabs.keyah
+        #   releaseFile: build/app/outputs/bundle/release/app-release.aab
+        #   track: internal
