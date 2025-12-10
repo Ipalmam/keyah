@@ -39,7 +39,7 @@ jobs:
           name: keyah-release-android
           path: build/app/outputs/bundle/release/app-release.aab
           
-      - name: 🚀 Deploy to Google Play Store (PASO FUTURO)
+      #- name: 🚀 Deploy to Google Play Store (PASO FUTURO)
         # Para esto necesitarás un archivo de credenciales de Google Play (JSON)
         # uses: r0adkll/upload-google-play@v1
         # with:
