@@ -39,7 +39,7 @@ class AboutScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24), 
               decoration: BoxDecoration(
-                color: KeyahColors.primaryBlue.withValues(alpha: 0.1),
+                color: KeyahColors.primaryBlue.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Image.asset(

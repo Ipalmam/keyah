@@ -198,8 +198,8 @@ class _DetailsBottomSheetState extends State<DetailsBottomSheet> {
         clipBehavior: Clip.antiAlias, // Asegura que el ripple respete los bordes
         child: InkWell(
           onTap: onTap,
-          splashColor: color.withValues(alpha: 0.1), // Color del efecto al tocar
-          highlightColor: color.withValues(alpha: 0.1),
+          splashColor: color.withOpacity(0.1), // Color del efecto al tocar
+          highlightColor: color.withOpacity(0.1),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
