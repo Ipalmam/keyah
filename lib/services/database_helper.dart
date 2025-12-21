@@ -38,14 +38,15 @@ class DatabaseHelper {
   }
 
   // --------------------------------------------------------------------------
-  // LÓGICA DE CONSULTA OPTIMIZADA (SIN BUCLE N+1)
+  // LÓGICA DE CONSULTA OPTIMIZADA
   // --------------------------------------------------------------------------
 
   Future<List<Association>> getAssociations({String? searchTerm, String? tematica}) async {
     final db = await database;
     
+    // --- ACTUALIZACIÓN AQUÍ: Agregamos 'dimo' y 'website' al SELECT ---
     String sql = '''
-      SELECT id, nombre, tematica, direccion, ciudad, estado, latitud, longitud, qr_imagen, monto_sugerido 
+      SELECT id, nombre, tematica, direccion, ciudad, estado, latitud, longitud, qr_imagen, monto_sugerido, dimo, website 
       FROM asociaciones 
       WHERE 1=1
     ''';
@@ -65,10 +66,12 @@ class DatabaseHelper {
     
     sql += ' ORDER BY nombre ASC';
     
-    // Ejecutamos UNA SOLA consulta rápida
+    // Ejecutamos la consulta
     final List<Map<String, dynamic>> maps = await db.rawQuery(sql, params);
     
-    // Mapeamos directamente. NO consultamos teléfonos ni correos aquí.
+    // Mapeamos los resultados. Ahora 'fromMap' ya sabe leer 'dimo' y 'website' gracias a tu actualización anterior.
+    // NOTA: Recuerda que 'telefonos' y 'correos' se cargan bajo demanda después, 
+    // pero si quisieras traerlos aquí tendrías que hacer un JOIN, lo cual por ahora no es necesario.
     return maps.map((map) => Association.fromMap(map)).toList();
   }
   
@@ -99,24 +102,21 @@ class DatabaseHelper {
   }
 
   // --------------------------------------------------------------------------
-  // NUEVA SECCIÓN: REPORTES Y ESTADÍSTICAS
+  // REPORTES Y ESTADÍSTICAS
   // --------------------------------------------------------------------------
 
-  // 1. KPI Generales (Totales para tarjetas superiores)
+  // 1. KPI Generales
   Future<Map<String, int>> getGeneralStats() async {
     final db = await database;
     
-    // Total de Asociaciones
     final totalAsoc = Sqflite.firstIntValue(
       await db.rawQuery('SELECT COUNT(*) FROM asociaciones')
     ) ?? 0;
 
-    // Total de Estados Cubiertos
     final totalEstados = Sqflite.firstIntValue(
       await db.rawQuery('SELECT COUNT(DISTINCT estado) FROM asociaciones')
     ) ?? 0;
 
-    // Total de Ciudades Cubiertas
     final totalCiudades = Sqflite.firstIntValue(
       await db.rawQuery('SELECT COUNT(DISTINCT ciudad) FROM asociaciones')
     ) ?? 0;
@@ -128,8 +128,7 @@ class DatabaseHelper {
     };
   }
 
-  // 2. Reporte Global por Temática (Para gráfico de pastel)
-  // Devuelve: [{'tematica': 'Salud', 'cantidad': 15}, ...]
+  // 2. Reporte Global por Temática
   Future<List<Map<String, dynamic>>> getGlobalTematicaStats() async {
     final db = await database;
     return await db.rawQuery('''
@@ -141,8 +140,7 @@ class DatabaseHelper {
     ''');
   }
 
-  // 3. Top Ciudades con más Asociaciones (Ranking)
-  // Devuelve: [{'ciudad': 'Chihuahua', 'estado': 'CHIHUAHUA', 'cantidad': 20}, ...]
+  // 3. Top Ciudades
   Future<List<Map<String, dynamic>>> getTopCities() async {
     final db = await database;
     return await db.rawQuery('''
@@ -154,8 +152,7 @@ class DatabaseHelper {
     ''');
   }
 
-  // 4. Temática por Estado (Desglose geográfico macro)
-  // Devuelve: [{'estado': 'CHIHUAHUA', 'tematica': 'Salud', 'cantidad': 5}, ...]
+  // 4. Temática por Estado
   Future<List<Map<String, dynamic>>> getTematicaByState() async {
     final db = await database;
     return await db.rawQuery('''
@@ -167,8 +164,7 @@ class DatabaseHelper {
     ''');
   }
 
-  // 5. Temática por Ciudad (Desglose geográfico micro)
-  // Devuelve: [{'ciudad': 'Juárez', 'tematica': 'Legal', 'cantidad': 3}, ...]
+  // 5. Temática por Ciudad
   Future<List<Map<String, dynamic>>> getTematicaByCity() async {
     final db = await database;
     return await db.rawQuery('''
@@ -181,7 +177,6 @@ class DatabaseHelper {
   }
 
   // Recuperar Redes Sociales
-  // Devuelve una lista de Mapas: [{'tipo': 'facebook', 'url': '...', 'usuario': '@...'}, ...]
   Future<List<Map<String, dynamic>>> getSocialNetworks(int asocId) async {
     final db = await database;
     return await db.query(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keyah/styles/colors.dart';
 import 'package:keyah/models/association.dart';
-
+import 'package:keyah/widgets/donation_modal.dart';
 class AssociationCard extends StatelessWidget {
   final Association association;
   final VoidCallback onDetailsPressed;
@@ -169,7 +169,14 @@ class AssociationCard extends StatelessWidget {
               children: [
                 // 1. Botón Donar (Nuevo - A la izquierda)
                 TextButton.icon(
-                  onPressed: () => _showDonationDialog(context),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => DonationModal(association: association),
+                    );
+                  },
                   icon: const Icon(Icons.volunteer_activism, size: 18, color: KeyahColors.actionOrange),
                   label: const Text('Donar', style: TextStyle(color: KeyahColors.actionOrange)),
                   style: TextButton.styleFrom(

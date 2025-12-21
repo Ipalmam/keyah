@@ -9,10 +9,14 @@ class Association {
   final double longitud;
   final String? qrImagen;
   final String? montoSugerido;
+  
+  // NUEVOS CAMPOS AGREGADOS
+  final String? dimo;    // Para pagos móviles
+  final String? website; // Para el botón de "Web"
+
   // Listas para los detalles (Relación 1 a muchos)
   final List<String> telefonos;
   final List<String> correos;
-
 
   const Association({
     required this.id,
@@ -25,6 +29,8 @@ class Association {
     required this.longitud,
     this.qrImagen,
     this.montoSugerido,
+    this.dimo,    // <--- Agregado
+    this.website, // <--- Agregado
     this.telefonos = const [],
     this.correos = const [],
   });
@@ -42,6 +48,8 @@ class Association {
       longitud: (map['longitud'] as num?)?.toDouble() ?? 0.0,
       qrImagen: map['qr_imagen'], 
       montoSugerido: map['monto_sugerido'],
+      dimo: map['dimo'] as String?,       // <--- Mapeo de BD
+      website: map['website'] as String?, // <--- Mapeo de BD
       telefonos: phones ?? [],
       correos: emails ?? [],
     );
