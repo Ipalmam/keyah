@@ -40,7 +40,6 @@ class _AssociationSearchScreenState extends State<AssociationSearchScreen> {
   @override
   void initState() {
     super.initState();
-    // Inicialmente mostramos la lista completa que recibimos de la pantalla de carga
     _displayedAssociations = widget.allAssociations;
   }
 
@@ -72,14 +71,13 @@ class _AssociationSearchScreenState extends State<AssociationSearchScreen> {
     );
   }
 
-  // Helper para mostrar mapa (CORREGIDO)
+  // Helper para mostrar mapa
   void _showMap(Association association) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, 
       backgroundColor: Colors.transparent,
       builder: (context) => MapModal(
-        // AQUÍ ESTÁ EL CAMBIO: Pasamos los datos individuales en lugar del objeto
         address: association.direccion,
         city: association.ciudad,
         state: association.estado,
@@ -109,7 +107,7 @@ class _AssociationSearchScreenState extends State<AssociationSearchScreen> {
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         _searchController.clear();
-                        setState(() => _selectedFilter = null); // Limpia filtros también
+                        setState(() => _selectedFilter = null);
                         _refreshData();
                       },
                     )
@@ -123,7 +121,6 @@ class _AssociationSearchScreenState extends State<AssociationSearchScreen> {
                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
               ),
               onChanged: (val) {
-                // Actualiza la búsqueda mientras el usuario escribe
                 _refreshData();
               },
             ),
@@ -153,7 +150,6 @@ class _AssociationSearchScreenState extends State<AssociationSearchScreen> {
               ),
             ),
           ),
-
           // Contador de resultados
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
@@ -173,15 +169,16 @@ class _AssociationSearchScreenState extends State<AssociationSearchScreen> {
               ],
             ),
           ),
-
           // Lista de Resultados
           Expanded(
             child: _displayedAssociations.isEmpty
               ? _buildEmptyState()
               : ListView.builder(
-                  // Cierra el teclado si el usuario hace scroll, mejora la UX
                   keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                  padding: const EdgeInsets.all(16.0),
+                  // --- AQUÍ ESTÁ EL CAMBIO CLAVE ---
+                  // Usamos fromLTRB para dar 100 de padding abajo.
+                  // Left: 16, Top: 16, Right: 16, Bottom: 100
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), 
                   itemCount: _displayedAssociations.length,
                   itemBuilder: (context, index) {
                     final assoc = _displayedAssociations[index];
@@ -197,7 +194,7 @@ class _AssociationSearchScreenState extends State<AssociationSearchScreen> {
       ),
     );
   }
-
+  
   // Widget auxiliar para construir los Chips de filtro
   Widget _buildFilterChip(String label, String? topicValue) {
     final isSelected = _selectedFilter == topicValue;
@@ -213,8 +210,7 @@ class _AssociationSearchScreenState extends State<AssociationSearchScreen> {
       onSelected: (selected) {
         setState(() {
           if (isSelected) {
-            // Si ya estaba seleccionado, lo quitamos (a menos que sea "Todas")
-             _selectedFilter = null;
+            _selectedFilter = null;
           } else {
             _selectedFilter = topicValue;
           }
@@ -224,7 +220,7 @@ class _AssociationSearchScreenState extends State<AssociationSearchScreen> {
     );
   }
 
-  // Estado vacío cuando no hay resultados
+  // Estado vacío
   Widget _buildEmptyState() {
     return Center(
       child: Column(

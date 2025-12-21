@@ -5,15 +5,17 @@ import 'package:keyah/utils/launchers.dart';
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
-  // CONFIGURACIÓN FINAL: El correo real al que se enviará todo (lanu.soy.yo@gmail.com)
+  // CONFIGURACIÓN FINAL:
   final String _contactEmail = 'lanu.soy.yo@gmail.com'; 
-
-  // La URL del sitio web de tu estudio (Usaremos esto para el CTA de Problemas)
   final String _arewaLabsUrl = 'https://www.arewalabs.com'; 
   
   // Datos de la app
   final String _appVersion = 'v1.0.0';
-  final String _privacyPolicyUrl = 'https://keyah.mx/privacidad'; 
+  
+  // -- URLs LEGALES ACTUALIZADAS --
+  // Asegúrate de que estas rutas coincidan con donde subas los archivos en tu servidor
+  final String _privacyPolicyUrl = 'https://www.arewalabs.com/apps/keyah-privacidad.html'; 
+  final String _termsUrl = 'https://www.arewalabs.com/apps/keyah-terminos.html';
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +93,7 @@ class AboutScreen extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            // --- NUEVO: INCENTIVO PARA SOLUCIONES ---
+            // --- INCENTIVO PARA SOLUCIONES ---
             _buildSupportHeader('¿Tienes un Reto que Resolver?'),
             const SizedBox(height: 10),
             _buildSupportText(
@@ -108,7 +110,7 @@ class AboutScreen extends StatelessWidget {
               child: Divider(height: 1, color: Colors.grey[200]),
             ),
             
-            // 3. OPCIONES DE CONTACTO Y LEGALES
+            // 3. CONTACTO
             _buildOptionTile(
               icon: Icons.email_outlined,
               title: 'Contáctanos',
@@ -121,23 +123,57 @@ class AboutScreen extends StatelessWidget {
               child: Divider(height: 1, color: Colors.grey[200]),
             ),
 
+            // 4. SECCIÓN LEGAL (ACTUALIZADA)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 10, left: 4),
+                child: Text(
+                  "LEGAL",
+                  style: TextStyle(
+                    color: Colors.grey[400], 
+                    fontWeight: FontWeight.bold, 
+                    fontSize: 12,
+                    letterSpacing: 1.2
+                  ),
+                ),
+              ),
+            ),
+
             _buildOptionTile(
               icon: Icons.privacy_tip_outlined,
-              title: 'Política de Privacidad',
-              subtitle: 'Cómo protegemos tus datos',
+              title: 'Aviso de Privacidad',
+              subtitle: 'Consulta cómo protegemos tus datos',
               onTap: () => Launchers.launchWeb(_privacyPolicyUrl),
             ),
 
             _buildOptionTile(
-              icon: Icons.description_outlined,
+              icon: Icons.gavel_outlined, // Icono de mazo legal
               title: 'Términos y Condiciones',
-              subtitle: 'Reglas de uso de la aplicación',
-              onTap: () => Launchers.launchWeb('https://keyah.mx/terminos'),
+              subtitle: 'Reglas de uso y deslinde financiero',
+              onTap: () => Launchers.launchWeb(_termsUrl),
+            ),
+
+            // NUEVO: Licencias de Software (Flutter nativo)
+            _buildOptionTile(
+              icon: Icons.code, 
+              title: 'Licencias de Código Abierto',
+              subtitle: 'Software utilizado para construir Keyah',
+              onTap: () => showLicensePage(
+                context: context,
+                applicationName: 'Keyah',
+                applicationVersion: _appVersion,
+                applicationLegalese: '© ${DateTime.now().year} Arewa Labs',
+                applicationIcon: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Image.asset('assets/images/studio_logo.png', width: 50, height: 50),
+                ),
+              ),
             ),
             
             const SizedBox(height: 40),
 
-            // 4. COPYRIGHT
+            // 5. COPYRIGHT
             Text(
               '© ${DateTime.now().year} Keyah México.\nTodos los derechos reservados.',
               textAlign: TextAlign.center,
@@ -149,20 +185,20 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  // Nuevo Widget Auxiliar para el título del incentivo
+  // Widget Auxiliar para el título del incentivo
   Widget _buildSupportHeader(String title) {
     return Text(
       title,
       style: const TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 20,
-        color: KeyahColors.actionOrange, // Color destacado
+        color: KeyahColors.actionOrange,
       ),
       textAlign: TextAlign.center,
     );
   }
 
-  // Nuevo Widget Auxiliar para el texto de incentivo
+  // Widget Auxiliar para el texto de incentivo
   Widget _buildSupportText(String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -174,7 +210,7 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  // Nuevo Widget Auxiliar para el botón de acción al sitio web
+  // Widget Auxiliar para el botón de acción
   Widget _buildSupportButton({required String url, required String label}) {
     return SizedBox(
       width: double.infinity,
@@ -194,8 +230,7 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-
-  // Widget auxiliar para las opciones de lista (Resto de opciones)
+  // Widget auxiliar para las opciones de lista
   Widget _buildOptionTile({
     required IconData icon,
     required String title,

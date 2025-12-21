@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keyah/styles/colors.dart';
 import 'package:keyah/services/database_helper.dart';
-// 1. CAMBIAMOS EL IMPORT
-import 'package:keyah/screens/home_screen.dart'; // <--- CAMBIO AQUÍ (Antes era association_search_screen)
+import 'package:keyah/screens/home_screen.dart';
 
 class InitializationScreen extends StatefulWidget {
   const InitializationScreen({super.key});
@@ -61,7 +60,6 @@ class _InitializationScreenState extends State<InitializationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ... El resto de tu diseño (build) se queda IGUAL ...
     return Scaffold(
       backgroundColor: KeyahColors.primaryBlue, 
       body: Center(
